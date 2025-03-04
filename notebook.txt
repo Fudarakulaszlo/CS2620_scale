@@ -1,0 +1,20 @@
+We will use grpc
+
+Our initial plan on the file structure is
+CS2620_scale/
+├── main.py
+├── virtual_machine.py
+├── distributed_system.proto
+├── notebook.txt
+├── requirements.txt
+└── generated/
+    ├── distributed_system_pb2.py
+    └── distributed_system_pb2_grpc.py
+
+First we write .proto file to define the messaging interface
+Then virtual_machine.py that uses the messages
+Then main.py that starts up the virtual machines and runs them for the specified duration
+
+After first implementation, we see that racing conditions occur, when we stop the program.
+This is because we forcefully close the file while the VMs still try to write to it.
+We will ignore this for now.

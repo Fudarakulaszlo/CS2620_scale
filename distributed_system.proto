@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+package distributed;
+
+// The gRPC service that each "virtual machine" implements.
+// Each VM can call SendMessage on the others, passing a ClockMessage.
+service DistributedSystem {
+  // Each VM calls "SendMessage" on another VM to deliver a ClockMessage.
+  rpc SendMessage(ClockMessage) returns (Ack);
+}
+
+// This message carries information about an event in the distributed system.
+message ClockMessage {
+  // The ID of the machine sending the message.
+  int32 sender_id = 1;
+
+  // The logical clock value of the sender at the time of sending.
+  int32 logical_clock = 2;
+
+  // The real-world system time (Unix timestamp) of the sender at the time of sending.
+  double sender_system_time = 3;
+
+  // The length of the sending machine's queue.
+  int32 queue_length = 4;
+
+  // A short string describing the type of event: e.g., "SEND", "INTERNAL", "RECEIVE", etc.
+  string event_type = 5;
+
+}
+
+// A simple acknowledgment message returned by the SendMessage RPC.
+message Ack {
+  // A string indicating the status (e.g., "OK", "ERROR", or anything you prefer).
+  string status = 1;
+}
