@@ -15,7 +15,7 @@ All VMs run on a **single physical machine** but simulate distributed behavior t
 ---
 
 ## File Structure
-
+```
 CS2620_scale/
 ├── main.py
 ├── virtual_machine.py
@@ -25,7 +25,7 @@ CS2620_scale/
 └── generated/
     ├── distributed_system_pb2.py
     └── distributed_system_pb2_grpc.py
-
+```
 
 1. **distributed_system.proto**  
    - Defines the gRPC service (`DistributedSystem`) and the messages (`ClockMessage`, `Ack`).
@@ -73,11 +73,12 @@ CS2620_scale/
    pip install -r requirements.txt
 
 3. **Generate** the gRPC Python files if you haven't already
-python -m grpc_tools.protoc \
-    --proto_path=. \
-    --python_out=generated \
-    --grpc_python_out=generated \
-    distributed_system.proto
+    ```bash
+    python -m grpc_tools.protoc \
+        --proto_path=. \
+        --python_out=generated \
+        --grpc_python_out=generated \
+        distributed_system.proto
 
 ## How to Run
 
@@ -101,9 +102,3 @@ python -m grpc_tools.protoc \
 - Look for lines indicating:
   - `RECEIVE`, `SEND`, and `INTERNAL` events.
   - Associated timestamps and logical clock values.
-
-## Modifications & Experiments
-
-- Adjust the random range for clock rates in `virtual_machine.py`.
-- Modify probabilities for sending vs. internal events.
-- Change the run duration or the number of machines.
