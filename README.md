@@ -22,6 +22,9 @@ CS2620_scale/
 ├── distributed_system.proto
 ├── notebook.txt
 ├── requirements.txt
+└──  tests/
+    ├── test_virtual_machine.py
+    ├── test_main.py
 └── generated/
     ├── distributed_system_pb2.py
     └── distributed_system_pb2_grpc.py
@@ -102,3 +105,10 @@ CS2620_scale/
 - Look for lines indicating:
   - `RECEIVE`, `SEND`, and `INTERNAL` events.
   - Associated timestamps and logical clock values.
+
+  ## Running unit tests
+
+  Run the following command in the main folder
+
+  ```bash
+  python -m unittest discover tests

@@ -18,3 +18,6 @@ Then main.py that starts up the virtual machines and runs them for the specified
 After first implementation, we see that racing conditions occur, when we stop the program.
 This is because we forcefully close the file while the VMs still try to write to it.
 We will ignore this for now.
+
+For our unit testing we add a test folder with some unit tests
+main seems weird to unit test as it just calls the VMs
