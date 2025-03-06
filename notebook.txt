@@ -1,3 +1,5 @@
+Code can be found at https://github.com/Fudarakulaszlo/CS2620_scale
+
 We will use grpc
 
 Our initial plan on the file structure is
@@ -21,3 +23,58 @@ We will ignore this for now.
 
 For our unit testing we add a test folder with some unit tests
 main seems weird to unit test as it just calls the VMs
+
+Experiments:
+
+1st experiment, speeds were 2-4-2
+2nd experiment, speeds were 2-5-6
+3rd experiment, speeds were 1-4-3
+4th experiment, speeds were 3-3-2
+5th experiment, speeds were 2-4-1
+
+We will analyze the 5th experiment in more detail, but the phenomena was the same across the experiments
+
+Machine 1 was the fastest here, so it's clock did not jump.
+
+For machine 0, there are big clock jumps, the biggest one we could find was from 109->123
+This was because the message probability is quite low, se even though its queue was empty, it took a while until it got a message from the fastest machine
+For a similar reason, machine 2 jumped 100->128
+This was to be expected based on the setup
+
+While the fastest machine barely had any recieve events, the slower ones were mostly busy with processing the messages
+The slowest machine barely logged anything else than recieve
+Again, this is trivially what should have happened
+
+Drifts occur, but since the fast machine sends messages frequently enough, they are recovered before they grow too big
+
+6th experiment, speeds were 1-2
+7th experiment, speeds were 3-4
+
+These experiments were aimed to see how big of a difference in clock speeds is tolerable.
+In the 1-2 case, jumps occured frequently, but in the 3-4 case, the machines were in sync almost all the time
+
+8th experiment 5-60-5
+
+The effect described above became even more exaggerated as expected. Essentially, while the clocks end up to be around the same value
+the ratio of the number of log entries converge to the ratio of the clock speeds
+However, here, the message queue of the slow machines gets flooded, and they can't catch their clock up
+
+Additional experimenting:
+
+Essentially, there is a balance to be struck here if we want to keep the drifts as low as possible
+While sending messages as frequently as possible would be a good way to always make sure that each machine has the information of what the global logical clock is
+machines need to process these messages, so they can't be that frequent. We hypothesized that the optimal behavior from the point of view of the clock
+is when the slow machines recieve one message every time they can do a calculation. In the simple case of two machines,
+this would mean that the message sending probability of the fast machine times the ratio between the speeds should be
+around the speed of the slow machine, meaning that the fast machine should send a message with probability slow_speed/fast_speed
+Experiments actually show that this can happen, clock stay sort of up to date with machines up to around 10/3 times faster than them
+That is, with 1-4, 1 gets left behind, 1-3 is borderline, it basically should only work in expectation, so we would have to run very long experiments
+So around the ratio 3 sometimes we see bad drifts, sometimes close to none
+Anyting below the ratio 3 is fine most of the time
+
+However, this setup clearly has the issue, that the slow machine is fully occupied with updating its clock, so all we see is receive events
+For the slow machine to actually contribute, it should only receive messages less than outlined above. Playing around with the parameters we see this
+shift happen, but the average drift increase. We couldn't full test this out, but essentially we expect the average drift to be
+around the ratio of the speeds if the slow machine is always receiving but its queue size doesn't go up
+If it also sends or has internal processes, then the drift will be the ratio of the speeds divided by the ratio of the slower machine working in expectation
+We saw some signs indicating something roughly around this, but would need to experiment a lot more to confirm

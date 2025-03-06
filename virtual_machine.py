@@ -195,7 +195,7 @@ class VirtualMachine:
                     if target is not None:
                         self.send_message(target, event_type="SEND")
                 elif val == 2:
-                    # Send to ONE other machine (like above, or pick different logic)
+                    # Send to ONE other machine
                     target = self.pick_random_other()
                     if target is not None:
                         self.send_message(target, event_type="SEND")
